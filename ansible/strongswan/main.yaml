@@ -1,0 +1,14 @@
+---
+
+- name: Include OS Family vars
+  include_vars: "{{ansible_os_family}}.yml"
+  tags: always
+
+- include: install.yml
+  tags: strongswan_install
+
+- include: config.yml
+  tags: strongswan_config
+
+- include: service.yml
+  tags: strongswan_service
