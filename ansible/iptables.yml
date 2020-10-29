@@ -1,0 +1,25 @@
+---
+- name: Iptables rules for my localhost
+  hosts: 127.0.0.1
+  become: yes
+
+  tasks:
+    - iptables: 
+        table: nat
+        chain: PREROUTING
+        protocol: udp
+        match: udp
+        source: 7.7.8.0/23
+        destination_port: 5050
+        jump: DNAT
+        to_destination: 127.0.0.1:53
+        comment: NAT rule for redirect 7.7.8.0/23->5050 to 127.0.0.1:53
+    - iptables: 
+        chain: FORWARD
+        protocol: udp
+        match: udp
+        source: 7.7.8.0/23
+        destination: 127.0.0.1
+        destination_port: 53
+        jump: ACCEPT
+        comment: ACCEPT rule for FORWARD from 7.7.8.0/23 to 127.0.0.1:53

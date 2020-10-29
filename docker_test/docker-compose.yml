@@ -1,0 +1,33 @@
+version: '3.6'
+services:
+
+  first:
+    image: debian:8
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - test_net
+
+  second:
+    image: elasticsearch
+    volumes:
+      - /logs:/var/log/elasticsearch
+    networks:
+      - test_net
+
+  third:
+    image: redis
+    deploy:
+      mode: replicated
+      replicas: 3
+    networks:
+      - test_net
+
+networks:
+  test_net:
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
