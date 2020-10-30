@@ -1,0 +1,8 @@
+---
+- name: import_playbook OS Family vars
+  hosts: all
+  tasks:
+  - include: install.yml
+  - include: config.yml
+  - include: firewall.yml
+  - include: service.yml

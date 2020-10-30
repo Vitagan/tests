@@ -1,0 +1,15 @@
+---
+- name: Install packages for Debian
+  yum: name={{ item }} state=latest
+  loop:
+    - strongswan
+    - strongswan-pki
+    - pwgen
+  when: ("{{ ansible_os_family }}" == 'Debian')
+- name: Install packages for RedHat
+  yum: name={{ item }} state=latest
+  loop:
+    - epel-release
+    - strongswan
+    - pwgen
+  when: ("{{ ansible_os_family }}" == 'RedHat')

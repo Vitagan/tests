@@ -1,0 +1,6 @@
+---
+- name: Enable Strongswan at boot
+  systemd:
+    name: strongswan
+    enabled: true
+    state: started

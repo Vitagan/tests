@@ -1,9 +1,0 @@
----
-
-strongswan_packages:
-  - strongswan
-
-strongswan_prefix: /etc/strongswan
-
-strongswan_ipsec_bin: /sbin/strongswan
-
