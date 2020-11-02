@@ -1,0 +1,18 @@
+- name: Install mysql
+  apt: 
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - mysql-server
+    - php-mysql
+    - python-mysqldb
+- name: Bind address
+  lineinfile: 
+    dest: "/etc/mysql/mysql.conf.d/mysqld.cnf" 
+    regexp: "^bind-address" 
+    line: "bind-address = {{db_host}}"
+- name: Start mysql
+  systemd: name=mysql enabled=yes state=restarted
+
+- name: grant privilegies for backend
+  shell: "mysql -uroot -e \"GRANT ALL PRIVILEGES ON *.* to 'root'@'{{back_serv_ip}}' IDENTIFIED BY '{{mysql_root_password}}' WITH GRANT OPTION; FLUSH PRIVILEGES;\""

@@ -1,0 +1,27 @@
+---
+- hosts: all
+  remote_user: ubuntu
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt: update_cache=true
+- hosts: dbservers
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - { role: mysql }
+- hosts: frontends
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - { role: nginx }
+- hosts: backends
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - { role: apache }
+- hosts: backends
+  remote_user: ubuntu
+  become: yes
+  roles:
+    - { role: wordpress }

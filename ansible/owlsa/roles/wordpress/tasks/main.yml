@@ -1,0 +1,54 @@
+- name: creating database
+  mysql_db:
+    name: "{{ db_name }}"
+    login_host: "{{ db_host }}"
+    state: "present"
+    login_user: "root"
+    login_password: "{{mysql_root_password}}"
+
+- name: creating database user
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    host: "{{ back_serv_ip }}"
+    state: "present"
+    login_host: "{{ db_host }}"
+    login_user: "root"
+    login_password: "{{mysql_root_password}}"
+
+- name: copy wordpress archive to site
+  copy:
+    src: "latest.tar.gz"
+    dest: "/home/www/{{site_name}}/latest.tar.gz"
+    owner: "www-data"
+    group: "www-data"
+    mode: 0644
+
+- name: unpack WordPress installation
+  unarchive:
+    src: /home/www/{{site_name}}/latest.tar.gz
+    dest: /home/www/{{site_name}}
+    owner: "www-data"
+    group: "www-data"
+    remote_src: yes
+
+- name: delete wordpress archive from site
+  file:
+    path: "/home/www/{{site_name}}/latest.tar.gz"
+    state: absent
+
+- name: push wordpress config
+  template: src=wp-config.php.j2 dest=/home/www/{{site_name}}/wp-config.php mode=0644 owner=www-data group=www-data
+
+- name: push database dump
+  template: src=draft.sql.j2 dest=/tmp/draft.sql mode=0644 owner=www-data group=www-data
+
+- name: install WordPress dump
+  shell: "mysql -u{{db_user}} -h{{db_host}} -p{{db_password}} < /tmp/draft.sql {{ db_name }}"
+
+- name: first little finishing touch :)
+  shell: "mysql -u{{db_user}} -h{{db_host}}  -p{{db_password}} -e \"update wp_options set option_value='http://{{site_name}}' where option_name='siteurl';\" {{ db_name }}"
+
+- name: and second little finishing touch :)
+  shell: "mysql -u{{db_user}} -h{{db_host}}  -p{{db_password}} -e \"update wp_options set option_value='http://{{site_name}}' where option_name='home';\" {{ db_name }}"

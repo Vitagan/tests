@@ -1,0 +1,12 @@
+<VirtualHost {{back_serv_ip}}:{{back_serv_port}}>
+        ServerName {{site_name}}
+        ServerAlias www.{{site_name}}
+	ServerAdmin info@vitagan.ru
+        <Directory /home/www/{{site_name}}/>
+    	    AllowOverride All
+        </Directory>
+
+        DocumentRoot /home/www/{{site_name}}
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

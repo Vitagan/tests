@@ -1,0 +1,3 @@
+site_name: "owlsa.vitagan.ru"
+back_serv_ip: "172.31.23.118"
+back_serv_port: "8080"

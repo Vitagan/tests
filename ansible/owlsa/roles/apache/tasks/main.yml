@@ -1,0 +1,49 @@
+- name: Install packages
+  apt:
+    pkg: "{{ item }}"
+    state: latest
+  with_items:
+    - apache2
+    - libapache2-mod-php
+    - libapache2-mod-rpaf
+    - php-mysql
+    - python-mysqldb
+    - mysql-client
+
+- name: enable modules
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - ssl
+    - rpaf
+
+- name: Push apache configuration
+  template: src=apache2.conf.j2 dest=/etc/apache2/apache2.conf mode=0644 owner=root group=root
+
+- name: Push apache virtual host configuration
+  template: src=virtual.conf.j2 dest=/etc/apache2/sites-available/{{site_name}}.conf mode=0644 owner=root group=root
+
+- name: Push Apache ports configuration
+  template: src=ports.conf.j2 dest=/etc/apache2/ports.conf mode=0644 owner=root group=root
+
+- name: delete default site
+  file:
+    path: "/etc/apache2/sites-enabled/000-default.conf"
+    state: "absent"
+
+- name: activate site configuration
+  file:
+    src: "/etc/apache2/sites-available/{{site_name}}.conf"
+    dest: "/etc/apache2/sites-enabled/{{site_name}}.conf"
+    state: "link"
+
+- name: creating site directory
+  file:
+    path: "/home/www/{{site_name}}"
+    state: "directory"
+    owner: "www-data"
+    group: "www-data"
+
+- name: Start Apache
+  systemd: name=apache2 enabled=yes state=restarted
