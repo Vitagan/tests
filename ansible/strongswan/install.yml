@@ -1,13 +1,13 @@
 ---
 - name: Install packages for Debian
-  yum: name={{ item }} state=latest
+  yum: name={{ item }} state=present
   loop:
     - strongswan
     - strongswan-pki
     - pwgen
   when: ("{{ ansible_os_family }}" == 'Debian')
 - name: Install packages for RedHat
-  yum: name={{ item }} state=latest
+  yum: name={{ item }} state=present
   loop:
     - epel-release
     - strongswan
